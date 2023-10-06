@@ -49,7 +49,7 @@ class ProductScreen extends StatelessWidget {
             textAlign: TextAlign.center,
             style:  const TextStyle(
               fontSize: 13,
-              color: Colors.purple,
+              color: Colors.indigo,
             ),
           ),
 

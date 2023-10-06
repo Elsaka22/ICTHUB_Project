@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "354394678331",
+    "project_id": "icthub-cf274",
+    "storage_bucket": "icthub-cf274.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:354394678331:android:fc1c0a7b7ec19bded6281e",
+        "android_client_info": {
+          "package_name": "com.example.icthub_2"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDIhTzeKwcyP9SyJgTbhwx0GT2C_oYIkfs"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
