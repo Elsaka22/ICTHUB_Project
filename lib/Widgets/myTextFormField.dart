@@ -1,21 +1,22 @@
 import 'package:flutter/material.dart';
 import 'package:icthub_2/colors.dart';
-import "package:flutter_svg/flutter_svg.dart";
 
-class MyFormField extends StatelessWidget {
+class MyFormFiled extends StatelessWidget {
   final TextEditingController controller;
   final String hintText;
-  final  String? Function(String?)?validator;
+  final String? Function(String?)? validator;
   Widget? prefixIcon;
   TextInputType? keyboardType;
+  final void Function(String)? onChanged;
 
-
-   MyFormField({super.key,
+  MyFormFiled({
+    super.key,
     required this.controller,
     required this.hintText,
-    required this.validator,
-     this.prefixIcon,
-     this.keyboardType,
+    this.validator,
+    this.prefixIcon,
+    this.keyboardType,
+    this.onChanged,
   });
 
   @override
@@ -26,34 +27,44 @@ class MyFormField extends StatelessWidget {
       ),
       child: TextFormField(
         controller: controller,
-        decoration:  InputDecoration(
+        keyboardType: keyboardType,
+        decoration: InputDecoration(
           enabledBorder: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(8),
+            borderRadius: BorderRadius.circular(8.0),
             borderSide: const BorderSide(
               color: AppColors.border,
             ),
           ),
-          focusedBorder:OutlineInputBorder(
-              borderRadius: BorderRadius.circular(8),
+          focusedBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(8.0),
             borderSide: const BorderSide(
               color: Colors.blue,
             ),
-          ) ,
-          contentPadding:const EdgeInsets.all(8),
+          ),
+          errorBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(8.0),
+            borderSide: const BorderSide(
+              color: AppColors.border,
+            ),
+          ),
+          focusedErrorBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(8.0),
+            borderSide: const BorderSide(
+              color: AppColors.border,
+            ),
+          ),
           fillColor: AppColors.formText,
           filled: true,
           hintText: hintText,
           hintStyle: const TextStyle(
             color: AppColors.hintText,
-            fontSize: 18,
+            fontSize: 17,
             fontFamily: 'Urbanist',
           ),
           prefixIcon: prefixIcon,
-
-
         ),
         validator: validator,
-
+        onChanged: onChanged,
       ),
     );
   }

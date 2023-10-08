@@ -1,135 +1,170 @@
-
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
-import 'package:icthub_2/Screens/Login_Screen.dart';
-import 'package:icthub_2/Screens/product_screens.dart';
-
-import '../data/data_source/Product-data_source.dart';
-
-class ListScreen extends StatefulWidget {
-  ListScreen({super.key});
-
-  @override
-
-  State<ListScreen> createState() => _ListScreenState();
-}
-
-class _ListScreenState extends State<ListScreen> {
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_svg/flutter_svg.dart';
+import 'package:icthub_2/colors.dart';
+import 'package:icthub_2/cubit/app_cubit.dart';
+import 'package:icthub_2/cubit/app_state.dart';
+import 'package:icthub_2/screens/login_screen.dart';
 
 
-
-  @override
-  void initState() {
-    super.initState();
-    if(DataSource.myList.isEmpty){
-      Future.delayed(
-        Duration.zero,
-            () async {
-          var data = await DataSource;
-          setState(() {
-            DataSource.myList = data;
-            isLoading = false;
-          });
-        },
-      );
-    }
-
-  }
-
-  bool isLoading = true;
+class ListScreen extends StatelessWidget {
+  const ListScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.white,
+      backgroundColor: const Color(0xFFF6F7F8),
       appBar: AppBar(
-        backgroundColor: Colors.blueGrey,
-        title: const Text('New Products'),
-        leading: InkWell(
-          onTap: ()async{
-            await FirebaseAuth.instance.signOut().whenComplete(() => Navigator.pushReplacement(context,
-              MaterialPageRoute(builder:  (context) => const LoginScreen(),))
-            );
-          },
-          child: const Icon(
-            Icons.logout_rounded,
-          ),
-        ),
+        backgroundColor: const Color(0xFF252837),
+        title: const Text('Croma'),
+        leading: IconButton(
+            onPressed: () async {
+              await FirebaseAuth.instance.signOut().whenComplete(() {
+                Navigator.pushReplacement(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => const LoginScreen(),
+                  ),
+                );
+              });
+            },
+            icon: const Icon(
+              Icons.logout,
+            )),
         actions: [
-          IconButton(onPressed: (){},
-              icon: const Icon(Icons.notifications),
+          SvgPicture.asset(
+            'images/bb.svg',
+          ),
+          IconButton(
+            onPressed: () async {
+              // setState(() {
+              //   isLoading = true;
+              // });
+              // await context.read<ListOfProductsCubit>().getData().then((value) {
+              //   context.read<ListOfProductsCubit>().myList = value;
+              //   setState(() {
+              //     isLoading = false;
+              //   });
+              // });
+            },
+            icon: const Icon(
+              Icons.refresh,
+            ),
           ),
         ],
+        leadingWidth: 50,
+        centerTitle: true,
       ),
-      body: isLoading
-          ? const Center(
-        child: CircularProgressIndicator(),
-      )
-          : SafeArea(
-        child: GridView.builder(
-          itemCount: DataSource.myList.length,
-          itemBuilder: (context, index) {
-            return InkWell(
-              onTap: () {
-                Navigator.push(context,
-                    MaterialPageRoute(builder: (context) =>
-                        ProductScreen(
-                          datax: DataSource.myList[index],
-                        ),
-                    ));
-              },
-              child: Container(
-                  height: 100,
-                  width: 100,
-                  decoration: BoxDecoration(
-                    color: Colors.grey,
-                    borderRadius: BorderRadius.circular(30),
-                    image: DecorationImage(
-                        fit: BoxFit.fill,
-                        image: Image
-                            .network(
-                          DataSource.myList[index].image,
-                        )
-                            .image),
+      body: BlocConsumer<ListOfProductsCubit, ListOfProductsState>(
+        listener: (context, state) {
+          if (state is GetProductsError) {
+            showDialog(
+              context: context,
+              builder: (context) {
+                return AlertDialog(
+                  content: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Text(
+                        state.error,
+                      ),
+                      const SizedBox(
+                        height: 20,
+                      ),
+                      ElevatedButton(
+                        onPressed: () {
+                          Navigator.pop(context);
+                          context.read<ListOfProductsCubit>().getProductsData();
+                        },
+                        child: const Text('retray'),
+                      )
+                    ],
                   ),
-                  alignment: Alignment.bottomCenter,
-                  margin: const EdgeInsets.all(10),
-                  child: Container(
-                    height: 50,
-                    width: double.infinity,
-                    decoration: const BoxDecoration(
-                        color: Colors.white,
-                        borderRadius: BorderRadius.only(
-                            bottomLeft: Radius.circular(30),
-                            topRight: Radius.circular(30))),
+                );
+              },
+            );
+          }
+        },
+        builder: (context, state) {
+          if (state is GetProductsLoading) {
+            return const Center(
+              child: CircularProgressIndicator(),
+            );
+          } else if (state is GetProductsError) {
+            return Center(
+              child: Text(
+                state.error,
+              ),
+            );
+          } else if (state is GetProductsDone) {
+            return SafeArea(
+              child: GridView.builder(
+                itemCount: context.read<ListOfProductsCubit>().myList.length,
+                itemBuilder: (context, index) {
+                  return InkWell(
+                    onTap: () {
+                      final product =
+                      context.read<ListOfProductsCubit>().myList[index];
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => ProductScreen(
+                            dataX: product,
+                          ),
+                        ),
+                      );
+                    },
                     child: Column(
-                      mainAxisSize: MainAxisSize.min,
-                      mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        Expanded(
-                          child: Text(
-                            DataSource.myList[index].name,
+                        Container(
+                          height: MediaQuery.of(context).size.height * 0.15,
+                          width: MediaQuery.of(context).size.width * 0.5,
+                          decoration: BoxDecoration(
+                            color: const Color(0xFFFFFFFF),
+                            borderRadius: BorderRadius.circular(30),
+                            image: DecorationImage(
+                              fit: BoxFit.contain,
+                              image: Image.network(
+                                context
+                                    .read<ListOfProductsCubit>()
+                                    .myList[index]
+                                    .image,
+                              ).image,
+                            ),
+                          ),
+                          alignment: Alignment.bottomCenter,
+                          margin: const EdgeInsets.all(10),
+                        ),
+                        Text(
+                          context
+                              .read<ListOfProductsCubit>()
+                              .myList[index]
+                              .name,
+                          style: const TextStyle(
+                            color: AppColors.hintText,
                           ),
                         ),
                         Text(
-                          DataSource.myList[index].brand,
-                        ),
-                        Text(
-                          '${DataSource.myList[index].price.toString()}\$',
+                          '${context.read<ListOfProductsCubit>().myList[index].price.toString()} EGP',
                           style: const TextStyle(
-                            fontSize: 15,
-                            color: Colors.green,
+                            fontSize: 18,
+                            color: Colors.black,
                           ),
                         ),
                       ],
                     ),
-                  )),
+                  );
+                },
+                gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                  crossAxisCount: 2,
+                ),
+              ),
             );
-          },
-          gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-              crossAxisCount: 2),
-        ),
+          } else {
+            return const Center(child: Text('errorrrrrr'));
+          }
+        },
       ),
     );
   }

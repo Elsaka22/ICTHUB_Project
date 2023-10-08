@@ -88,7 +88,7 @@ class _LoginScreenState extends State<LoginScreen> {
                 ),
               ),
               const Spacer(),
-              MyFormField(
+              MyFormFiled(
                 controller: emailX,
                 validator: (value) {
                   if (value!.length < 9) {
@@ -101,7 +101,7 @@ class _LoginScreenState extends State<LoginScreen> {
                 },
                 hintText: 'email',
               ),
-              MyFormField(
+              MyFormFiled(
                 controller: passwordX,
                 validator: (value) {
                   if (value!.length < 6) {

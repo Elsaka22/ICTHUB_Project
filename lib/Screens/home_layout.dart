@@ -1,5 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:icthub_2/Screens/list_screen.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:icthub_2/colors.dart';
+import 'package:icthub_2/cubit/app_cubit.dart';
+import 'package:icthub_2/cubit/profile_cubit.dart';
+import 'package:icthub_2/screens/list_screen.dart';
+import 'package:icthub_2/screens/profile_screen.dart';
+import 'package:icthub_2/screens/search.dart';
 
 class HomeLayout extends StatefulWidget {
   const HomeLayout({super.key});
@@ -9,46 +15,59 @@ class HomeLayout extends StatefulWidget {
 }
 
 class _HomeLayoutState extends State<HomeLayout> {
-  int CurrentIndex = 0;
-  List<Widget> listScreens =
-      [
-        ListScreen(),
+  int currentIndex = 0;
 
-      ];
+  List<Widget> listScreens = [
+    const ListScreen(),
+    SearchScreen(),
+    const ProfileScreen(),
+  ];
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: ListScreen(),
-      bottomNavigationBar: BottomNavigationBar(
-        unselectedItemColor: Colors.grey,
-        selectedItemColor: Colors.blueGrey,
-        backgroundColor: Colors.white70,
-
-        currentIndex: CurrentIndex,
-        onTap: (index){
-
-        },
-
-        items: const [
-          BottomNavigationBarItem(
+    return MultiBlocProvider(
+      providers: [
+        BlocProvider<ListOfProductsCubit>(
+          create: (context) => ListOfProductsCubit()..getProductsData(),
+        ),
+        BlocProvider<ProfileCubit>(
+          create: (context) => ProfileCubit()..getUserDataFromFireStore(),
+        ),
+      ],
+      child: Scaffold(
+        backgroundColor: AppColors.scaffold,
+        body: listScreens[currentIndex],
+        bottomNavigationBar: BottomNavigationBar(
+          backgroundColor: AppColors.primary,
+          selectedItemColor: AppColors.scaffold,
+          unselectedItemColor: AppColors.hintTextX,
+          currentIndex: currentIndex,
+          onTap: (index) {
+            setState(() {
+              currentIndex = index;
+            });
+          },
+          items: const [
+            BottomNavigationBarItem(
               icon: Icon(
-                Icons.home_outlined,
+                Icons.home_filled,
               ),
-              label: 'home'
-          ), BottomNavigationBarItem(
+              label: 'home',
+            ),
+            BottomNavigationBarItem(
               icon: Icon(
                 Icons.search,
               ),
-              label: 'search'
-          ),
-          BottomNavigationBarItem(
+              label: 'search',
+            ),
+            BottomNavigationBarItem(
               icon: Icon(
                 Icons.person,
               ),
-              label: 'profile'
-          ),
-        ],
+              label: 'profile',
+            ),
+          ],
+        ),
       ),
     );
   }

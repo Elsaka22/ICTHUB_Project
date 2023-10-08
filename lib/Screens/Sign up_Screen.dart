@@ -113,7 +113,7 @@ class _SignupScreenState extends State<SignupScreen> {
                 ),
               ),
               const Spacer(),
-              MyFormField(
+              MyFormFiled(
                 controller: namedX,
                 validator: (value) {
                   if (value!.isEmpty) {
@@ -126,7 +126,7 @@ class _SignupScreenState extends State<SignupScreen> {
                   Icons.person,
                 ),
               ),
-              MyFormField(
+              MyFormFiled(
                 controller: emailX,
                 validator: (value) {
                   if (value!.length < 9) {
@@ -142,7 +142,7 @@ class _SignupScreenState extends State<SignupScreen> {
                   Icons.email_outlined,
                 ),
               ),
-              MyFormField(
+              MyFormFiled(
                 controller: passwordX,
                 validator: (value) {
                   if (value!.length < 6) {
@@ -154,7 +154,7 @@ class _SignupScreenState extends State<SignupScreen> {
                   Icons.password_rounded,
                 ),
               ),
-              MyFormField(
+              MyFormFiled(
                 controller: phoneX,
                 validator: (value) {
                   if (value!.length < 11) {
